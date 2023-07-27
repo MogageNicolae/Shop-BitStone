@@ -4,7 +4,7 @@ const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
 const config = {
 	entry: {
 		index: './src/js/index.js',
-		product: './src/js/product-page.js',
+		'product-page': './src/js/product-page.js',
 	},
 	output: {
 		path: path.resolve( __dirname, 'dist' ),
