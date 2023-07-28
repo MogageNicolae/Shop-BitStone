@@ -1,8 +1,5 @@
-async function fetchProducts() {
-    let jsonProducts = await fetch('https://dummyjson.com/products')
-        .then(res => res.json());
-    return jsonProducts['products'];
-}
+import {fetchProducts, getProductAfterId} from './api.js';
+import {addAddToCartListeners} from "./cart";
 
 function createCssClass(className, urlSimple) {
     let style = document.createElement('style');
@@ -16,48 +13,6 @@ function createCssClass(className, urlSimple) {
     }
     `;
     document.getElementsByTagName('head')[0].appendChild(style);
-}
-
-function showNotification() {
-    let notification = document.querySelector('.notification');
-    notification.classList.add('show');
-    setTimeout(() => {
-        notification.classList.remove('show');
-    }, 3000);
-}
-
-function modifyAddToCartButton(btn) {
-    btn.innerHTML = 'Added to cart';
-    btn.classList.add('added-to-cart');
-    btn.disabled = true;
-    setTimeout(() => {
-        btn.innerHTML = 'Add to cart';
-        btn.classList.remove('added-to-cart');
-        btn.disabled = false;
-    }, 3000);
-}
-
-function updateCart(productId) {
-    if (document.getElementsByClassName('quantity-cart quantity-empty').length !== 0) {
-        document.querySelector('.quantity-cart').classList.remove('quantity-empty');
-        document.querySelector('.quantity-cart').innerHTML = '1';
-        return;
-    }
-    document.querySelector('.quantity-cart').innerHTML = String(Number(document.querySelector('.quantity-cart').innerHTML) + 1);
-}
-
-function addToCart(btn, productId) {
-    showNotification();
-    modifyAddToCartButton(btn);
-    updateCart(productId);
-}
-
-function addAddToCartListeners() {
-    document.querySelectorAll('.add-to-cart-button').forEach((button) => {
-        button.addEventListener('click', () => {
-            addToCart(button, button.attributes[1].value);
-        });
-    });
 }
 
 function goToProductPage() {

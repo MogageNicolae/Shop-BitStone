@@ -30,6 +30,16 @@ eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extr
 
 /***/ }),
 
+/***/ "./src/js/api.js":
+/*!***********************!*\
+  !*** ./src/js/api.js ***!
+  \***********************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   fetchProducts: () => (/* binding */ fetchProducts),\n/* harmony export */   getProductAfterId: () => (/* binding */ getProductAfterId)\n/* harmony export */ });\nasync function fetchProducts() {\r\n    let jsonProducts = await fetch('https://dummyjson.com/products')\r\n        .then(res => res.json());\r\n    return jsonProducts['products'];\r\n}\r\n\r\nasync function getProductAfterId(id) {\r\n    return await fetch('https://dummyjson.com/products/' + id)\r\n        .then(res => res.json());\r\n}\r\n\n\n//# sourceURL=webpack://internship-2023/./src/js/api.js?");
+
+/***/ }),
+
 /***/ "./src/js/app.js":
 /*!***********************!*\
   !*** ./src/js/app.js ***!
@@ -40,13 +50,23 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 
 /***/ }),
 
+/***/ "./src/js/cart.js":
+/*!************************!*\
+  !*** ./src/js/cart.js ***!
+  \************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   addAddToCartListeners: () => (/* binding */ addAddToCartListeners),\n/* harmony export */   initCartList: () => (/* binding */ initCartList)\n/* harmony export */ });\n/* harmony import */ var _api__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./api */ \"./src/js/api.js\");\n\r\n\r\nlet cartListClicked = false;\r\nlet cartListTimeout = null;\r\n\r\nfunction initCartList() {\r\n    document.querySelector('.nav-bar-menu-right ul li:last-child').onmouseover = () => {\r\n        document.querySelector('.cart-list').classList.add('show');\r\n        clearTimeout(cartListTimeout);\r\n    }\r\n\r\n    document.querySelector('.nav-bar-menu-right ul li:last-child').onmouseout = () => {\r\n        if (cartListClicked) {\r\n            return;\r\n        }\r\n        cartListTimeout = setTimeout(() => {\r\n            document.querySelector('.cart-list').classList.remove('show');\r\n        }, 1000);\r\n    }\r\n\r\n    document.querySelector('.nav-bar-menu-right ul li:last-child').onclick = () => {\r\n        cartListClicked = true;\r\n        document.querySelector('.cart-list').classList.add('show');\r\n    }\r\n\r\n    document.querySelector('.cart-list-header-close').onclick = () => {\r\n        cartListClicked = false;\r\n        document.querySelector('.cart-list').classList.remove('show');\r\n    }\r\n\r\n    document.querySelector('.cart-list').onmouseover = () => {\r\n        document.querySelector('.cart-list').classList.add('show');\r\n        clearTimeout(cartListTimeout);\r\n    }\r\n\r\n    document.querySelector('.cart-list').onmouseout = () => {\r\n        if (cartListClicked) {\r\n            return;\r\n        }\r\n        cartListTimeout = setTimeout(() => {\r\n            document.querySelector('.cart-list').classList.remove('show');\r\n        }, 1000);\r\n    }\r\n}\r\n\r\nfunction showNotification() {\r\n    let notification = document.querySelector('.notification');\r\n    notification.classList.add('show');\r\n    setTimeout(() => {\r\n        notification.classList.remove('show');\r\n    }, 3000);\r\n}\r\n\r\nfunction modifyAddToCartButton(btn) {\r\n    btn.innerHTML = 'Added to cart';\r\n    btn.classList.add('added-to-cart');\r\n    btn.disabled = true;\r\n    setTimeout(() => {\r\n        btn.innerHTML = 'Add to cart';\r\n        btn.classList.remove('added-to-cart');\r\n        btn.disabled = false;\r\n    }, 3000);\r\n}\r\n\r\nasync function addToCart(btn, productId) {\r\n    showNotification();\r\n    modifyAddToCartButton(btn);\r\n    await updateCart(productId);\r\n}\r\n\r\nfunction addAddToCartListeners() {\r\n    document.querySelectorAll('.add-to-cart-button').forEach((button) => {\r\n        button.addEventListener('click', async () => {\r\n            await addToCart(button, button.attributes[1].value);\r\n        });\r\n    });\r\n}\r\n\r\nfunction newProductCartHTML(product) {\r\n    return `\r\n    <div class=\"cart-list-body-item\" data-id=\"${product.id}\">\r\n        <div class=\"cart-list-body-item-image\">\r\n            <img src=\"${product.thumbnail}\" alt=\"${product.title}\">\r\n        </div>\r\n        <div class=\"cart-list-body-item-info\">\r\n            <div class=\"cart-list-body-item-info-title\">${product.title}</div>\r\n            <div class=\"cart-list-body-item-info-price\">$${product.price}</div>\r\n        </div>\r\n        <div class=\"cart-list-body-item-quantity\">\r\n            <div class=\"cart-list-body-item-quantity-decrease\">-</div>\r\n            <div class=\"cart-list-body-item-quantity-value\">1</div>\r\n            <div class=\"cart-list-body-item-quantity-increase\">+</div>\r\n        </div>\r\n        <div class=\"cart-list-body-item-total\">$${product.price}</div>\r\n        <div class=\"cart-list-body-item-remove\"><span class=\"material-symbols-outlined\">close</span></div>\r\n    </div>\r\n    `;\r\n}\r\n\r\nfunction decreaseProductQuantity(addedProduct, productInfo) {\r\n    if (addedProduct.querySelector('.cart-list-body-item-quantity-value').innerHTML === '1') {\r\n        removeProductFromCart(addedProduct, productInfo);\r\n        return;\r\n    }\r\n    addedProduct.querySelector('.cart-list-body-item-quantity-value').innerHTML = String(Number(addedProduct.querySelector('.cart-list-body-item-quantity-value').innerHTML) - 1);\r\n    document.querySelector('.cart-list-footer-total').innerHTML = 'Total: ' + String(Number(document.querySelector('.cart-list-footer-total').innerHTML.replace('Total: ', '')) - productInfo.price);\r\n}\r\n\r\nfunction increaseProductQuantity(addedProduct, productInfo) {\r\n    addedProduct.querySelector('.cart-list-body-item-quantity-value').innerHTML = String(Number(addedProduct.querySelector('.cart-list-body-item-quantity-value').innerHTML) + 1);\r\n    document.querySelector('.cart-list-footer-total').innerHTML = 'Total: ' + String(Number(document.querySelector('.cart-list-footer-total').innerHTML.replace('Total: ', '')) + productInfo.price);\r\n}\r\n\r\nfunction removeProductFromCart(addedProduct, productInfo) {\r\n    document.querySelector('.cart-list-body').removeChild(addedProduct);\r\n    document.querySelector('.cart-list-footer-total').innerHTML = 'Total: ' + String(Number(document.querySelector('.cart-list-footer-total').innerHTML.replace('Total: ', '')) - productInfo.price * Number(addedProduct.querySelector('.cart-list-body-item-quantity-value').innerHTML));\r\n    if (document.querySelector('.quantity-cart').innerHTML === '1') {\r\n        document.querySelector('.quantity-cart').classList.add('quantity-empty');\r\n        document.querySelector('.quantity-cart').innerHTML = '';\r\n        return;\r\n    }\r\n    document.querySelector('.quantity-cart').innerHTML = String(Number(document.querySelector('.quantity-cart').innerHTML) - 1);\r\n}\r\n\r\nfunction attachEventHandlersToProduct(addedProduct, product) {\r\n    addedProduct.querySelector('.cart-list-body-item-quantity-decrease').addEventListener('click', () => decreaseProductQuantity(addedProduct, product));\r\n    addedProduct.querySelector('.cart-list-body-item-quantity-increase').addEventListener('click', () => increaseProductQuantity(addedProduct, product));\r\n    addedProduct.querySelector('.cart-list-body-item-remove').addEventListener('click', () => removeProductFromCart(addedProduct, product));\r\n}\r\n\r\nasync function updateCart(productId) {\r\n    let product = await (0,_api__WEBPACK_IMPORTED_MODULE_0__.getProductAfterId)(productId);\r\n    let cartProducts = document.querySelectorAll('.cart-list-body-item');\r\n    let productsExists = false;\r\n    for (let cartIndex = 0; cartIndex < cartProducts.length; cartIndex++) {\r\n        if (cartProducts[cartIndex].getAttribute('data-id') === String(productId)) {\r\n            cartProducts[cartIndex].querySelector('.cart-list-body-item-quantity-value').innerHTML = String(Number(cartProducts[cartIndex].querySelector('.cart-list-body-item-quantity-value').innerHTML) + 1);\r\n            productsExists = true;\r\n            break;\r\n        }\r\n    }\r\n\r\n    if (!productsExists) {\r\n        document.querySelector('.cart-list-body').insertAdjacentHTML('beforeend', newProductCartHTML(product));\r\n        const addedProduct = document.querySelector('.cart-list-body-item:last-child');\r\n        attachEventHandlersToProduct(addedProduct, product);\r\n    }\r\n    document.querySelector('.cart-list-footer-total').innerHTML = 'Total: ' + String(Number(document.querySelector('.cart-list-footer-total').innerHTML.replace('Total: ', '')) + product.price);\r\n    if (document.getElementsByClassName('quantity-cart quantity-empty').length !== 0) {\r\n        document.querySelector('.quantity-cart').classList.remove('quantity-empty');\r\n        document.querySelector('.quantity-cart').innerHTML = '1';\r\n        return;\r\n    }\r\n    document.querySelector('.quantity-cart').innerHTML = String(Number(document.querySelector('.quantity-cart').innerHTML) + 1);\r\n}\n\n//# sourceURL=webpack://internship-2023/./src/js/cart.js?");
+
+/***/ }),
+
 /***/ "./src/js/index.js":
 /*!*************************!*\
   !*** ./src/js/index.js ***!
   \*************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _sass_styles_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../sass/styles.scss */ \"./src/sass/styles.scss\");\n/* harmony import */ var _sass_nav_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../sass/nav.scss */ \"./src/sass/nav.scss\");\n/* harmony import */ var _app__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./app */ \"./src/js/app.js\");\n/* harmony import */ var _products_grid__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./products-grid */ \"./src/js/products-grid.js\");\n\r\n\r\n\r\n\r\n\r\n(0,_app__WEBPACK_IMPORTED_MODULE_2__.init)();\r\n(0,_products_grid__WEBPACK_IMPORTED_MODULE_3__.loadProducts)();\r\n\n\n//# sourceURL=webpack://internship-2023/./src/js/index.js?");
+eval("__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {\n__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _sass_styles_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../sass/styles.scss */ \"./src/sass/styles.scss\");\n/* harmony import */ var _sass_nav_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../sass/nav.scss */ \"./src/sass/nav.scss\");\n/* harmony import */ var _app__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./app */ \"./src/js/app.js\");\n/* harmony import */ var _products_grid__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./products-grid */ \"./src/js/products-grid.js\");\n/* harmony import */ var _cart__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./cart */ \"./src/js/cart.js\");\n\r\n\r\n\r\n\r\n\r\n\r\n(0,_app__WEBPACK_IMPORTED_MODULE_2__.init)();\r\nawait (0,_products_grid__WEBPACK_IMPORTED_MODULE_3__.loadProducts)();\r\n(0,_cart__WEBPACK_IMPORTED_MODULE_4__.initCartList)();\r\n\n__webpack_async_result__();\n} catch(e) { __webpack_async_result__(e); } }, 1);\n\n//# sourceURL=webpack://internship-2023/./src/js/index.js?");
 
 /***/ }),
 
@@ -56,7 +76,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _sas
   \*********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   loadProducts: () => (/* binding */ loadProducts)\n/* harmony export */ });\nasync function fetchProducts() {\r\n    let jsonProducts = await fetch('https://dummyjson.com/products')\r\n        .then(res => res.json());\r\n    return jsonProducts['products'];\r\n}\r\n\r\nfunction createCssClass(className, urlSimple) {\r\n    let style = document.createElement('style');\r\n    style.textContent = 'style';\r\n    style.innerHTML = `\r\n    .product .${className} {\r\n        background-image: url(${urlSimple});\r\n        background-size: cover;\r\n        margin: 0;\r\n        padding: 0;\r\n    }\r\n    `;\r\n    document.getElementsByTagName('head')[0].appendChild(style);\r\n}\r\n\r\nfunction showNotification() {\r\n    let notification = document.querySelector('.notification');\r\n    notification.classList.add('show');\r\n    setTimeout(() => {\r\n        notification.classList.remove('show');\r\n    }, 3000);\r\n}\r\n\r\nfunction modifyAddToCartButton(btn) {\r\n    btn.innerHTML = 'Added to cart';\r\n    btn.classList.add('added-to-cart');\r\n    btn.disabled = true;\r\n    setTimeout(() => {\r\n        btn.innerHTML = 'Add to cart';\r\n        btn.classList.remove('added-to-cart');\r\n        btn.disabled = false;\r\n    }, 3000);\r\n}\r\n\r\nfunction updateCart(productId) {\r\n    if (document.getElementsByClassName('quantity-cart quantity-empty').length !== 0) {\r\n        document.querySelector('.quantity-cart').classList.remove('quantity-empty');\r\n        document.querySelector('.quantity-cart').innerHTML = '1';\r\n        return;\r\n    }\r\n    document.querySelector('.quantity-cart').innerHTML = String(Number(document.querySelector('.quantity-cart').innerHTML) + 1);\r\n}\r\n\r\nfunction addToCart(btn, productId) {\r\n    showNotification();\r\n    modifyAddToCartButton(btn);\r\n    updateCart(productId);\r\n}\r\n\r\nfunction addAddToCartListeners() {\r\n    document.querySelectorAll('.add-to-cart-button').forEach((button) => {\r\n        button.addEventListener('click', () => {\r\n            addToCart(button, button.attributes[1].value);\r\n        });\r\n    });\r\n}\r\n\r\nfunction goToProductPage() {\r\n    document.querySelectorAll('.product-image').forEach((product) => {\r\n        product.addEventListener('click', () => window.location.href = 'product-page.html?id=' + product.attributes[1].value);\r\n    });\r\n}\r\n\r\nfunction addListeners() {\r\n    addAddToCartListeners();\r\n    goToProductPage();\r\n}\r\n\r\nasync function loadProducts() {\r\n    let products = await fetchProducts();\r\n\r\n    document.querySelector('#no-of-products').innerHTML = 'Products: ' + products.length;\r\n    products.forEach((product) => {\r\n        let productHTML = `\r\n        <div class=\"product\">\r\n            <div class=\"product-image id${product.id}\" data-id=\"${product.id}\">\r\n                <img src=\"${product.images[product.images.length - 1]}\" alt=\"${product.title}\">` + (product.discountPercentage > 7 ? `<div>-${product.discountPercentage}%</div>` : '') +\r\n            `</div>\r\n            <div class=\"product-info\">\r\n                <div class=\"product-info-left\">\r\n                    <div class=\"product-info-name\">${product.title}</div>\r\n                    <div class=\"product-info-price\">$ ${product.price}</div>\r\n                </div>\r\n                <div class=\"product-info-right\">\r\n                    <button class=\"button add-to-cart-button\" data-id=\"${product.id}\">Add to cart</button>\r\n                </div>\r\n            </div>\r\n        </div>\r\n        `;\r\n        document.querySelector('.products-grid').insertAdjacentHTML('beforeend', productHTML);\r\n        createCssClass('id' + product.id, product.images[0]);\r\n    });\r\n\r\n    addListeners();\r\n}\n\n//# sourceURL=webpack://internship-2023/./src/js/products-grid.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   loadProducts: () => (/* binding */ loadProducts)\n/* harmony export */ });\n/* harmony import */ var _api_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./api.js */ \"./src/js/api.js\");\n/* harmony import */ var _cart__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./cart */ \"./src/js/cart.js\");\n\r\n\r\n\r\nfunction createCssClass(className, urlSimple) {\r\n    let style = document.createElement('style');\r\n    style.textContent = 'style';\r\n    style.innerHTML = `\r\n    .product .${className} {\r\n        background-image: url(${urlSimple});\r\n        background-size: cover;\r\n        margin: 0;\r\n        padding: 0;\r\n    }\r\n    `;\r\n    document.getElementsByTagName('head')[0].appendChild(style);\r\n}\r\n\r\nfunction goToProductPage() {\r\n    document.querySelectorAll('.product-image').forEach((product) => {\r\n        product.addEventListener('click', () => window.location.href = 'product-page.html?id=' + product.attributes[1].value);\r\n    });\r\n}\r\n\r\nfunction addListeners() {\r\n    (0,_cart__WEBPACK_IMPORTED_MODULE_1__.addAddToCartListeners)();\r\n    goToProductPage();\r\n}\r\n\r\nasync function loadProducts() {\r\n    let products = await (0,_api_js__WEBPACK_IMPORTED_MODULE_0__.fetchProducts)();\r\n\r\n    document.querySelector('#no-of-products').innerHTML = 'Products: ' + products.length;\r\n    products.forEach((product) => {\r\n        let productHTML = `\r\n        <div class=\"product\">\r\n            <div class=\"product-image id${product.id}\" data-id=\"${product.id}\">\r\n                <img src=\"${product.images[product.images.length - 1]}\" alt=\"${product.title}\">` + (product.discountPercentage > 7 ? `<div>-${product.discountPercentage}%</div>` : '') +\r\n            `</div>\r\n            <div class=\"product-info\">\r\n                <div class=\"product-info-left\">\r\n                    <div class=\"product-info-name\">${product.title}</div>\r\n                    <div class=\"product-info-price\">$ ${product.price}</div>\r\n                </div>\r\n                <div class=\"product-info-right\">\r\n                    <button class=\"button add-to-cart-button\" data-id=\"${product.id}\">Add to cart</button>\r\n                </div>\r\n            </div>\r\n        </div>\r\n        `;\r\n        document.querySelector('.products-grid').insertAdjacentHTML('beforeend', productHTML);\r\n        createCssClass('id' + product.id, product.images[0]);\r\n    });\r\n\r\n    addListeners();\r\n}\n\n//# sourceURL=webpack://internship-2023/./src/js/products-grid.js?");
 
 /***/ })
 
@@ -87,6 +107,75 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/async module */
+/******/ 	(() => {
+/******/ 		var webpackQueues = typeof Symbol === "function" ? Symbol("webpack queues") : "__webpack_queues__";
+/******/ 		var webpackExports = typeof Symbol === "function" ? Symbol("webpack exports") : "__webpack_exports__";
+/******/ 		var webpackError = typeof Symbol === "function" ? Symbol("webpack error") : "__webpack_error__";
+/******/ 		var resolveQueue = (queue) => {
+/******/ 			if(queue && queue.d < 1) {
+/******/ 				queue.d = 1;
+/******/ 				queue.forEach((fn) => (fn.r--));
+/******/ 				queue.forEach((fn) => (fn.r-- ? fn.r++ : fn()));
+/******/ 			}
+/******/ 		}
+/******/ 		var wrapDeps = (deps) => (deps.map((dep) => {
+/******/ 			if(dep !== null && typeof dep === "object") {
+/******/ 				if(dep[webpackQueues]) return dep;
+/******/ 				if(dep.then) {
+/******/ 					var queue = [];
+/******/ 					queue.d = 0;
+/******/ 					dep.then((r) => {
+/******/ 						obj[webpackExports] = r;
+/******/ 						resolveQueue(queue);
+/******/ 					}, (e) => {
+/******/ 						obj[webpackError] = e;
+/******/ 						resolveQueue(queue);
+/******/ 					});
+/******/ 					var obj = {};
+/******/ 					obj[webpackQueues] = (fn) => (fn(queue));
+/******/ 					return obj;
+/******/ 				}
+/******/ 			}
+/******/ 			var ret = {};
+/******/ 			ret[webpackQueues] = x => {};
+/******/ 			ret[webpackExports] = dep;
+/******/ 			return ret;
+/******/ 		}));
+/******/ 		__webpack_require__.a = (module, body, hasAwait) => {
+/******/ 			var queue;
+/******/ 			hasAwait && ((queue = []).d = -1);
+/******/ 			var depQueues = new Set();
+/******/ 			var exports = module.exports;
+/******/ 			var currentDeps;
+/******/ 			var outerResolve;
+/******/ 			var reject;
+/******/ 			var promise = new Promise((resolve, rej) => {
+/******/ 				reject = rej;
+/******/ 				outerResolve = resolve;
+/******/ 			});
+/******/ 			promise[webpackExports] = exports;
+/******/ 			promise[webpackQueues] = (fn) => (queue && fn(queue), depQueues.forEach(fn), promise["catch"](x => {}));
+/******/ 			module.exports = promise;
+/******/ 			body((deps) => {
+/******/ 				currentDeps = wrapDeps(deps);
+/******/ 				var fn;
+/******/ 				var getResult = () => (currentDeps.map((d) => {
+/******/ 					if(d[webpackError]) throw d[webpackError];
+/******/ 					return d[webpackExports];
+/******/ 				}))
+/******/ 				var promise = new Promise((resolve) => {
+/******/ 					fn = () => (resolve(getResult));
+/******/ 					fn.r = 0;
+/******/ 					var fnQueue = (q) => (q !== queue && !depQueues.has(q) && (depQueues.add(q), q && !q.d && (fn.r++, q.push(fn))));
+/******/ 					currentDeps.map((dep) => (dep[webpackQueues](fnQueue)));
+/******/ 				});
+/******/ 				return fn.r ? promise : getResult();
+/******/ 			}, (err) => ((err ? reject(promise[webpackError] = err) : outerResolve(exports)), resolveQueue(queue)));
+/******/ 			queue && queue.d < 0 && (queue.d = 0);
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter functions for harmony exports

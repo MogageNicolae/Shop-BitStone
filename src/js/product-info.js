@@ -1,7 +1,4 @@
-async function getProductAfterId(id) {
-    return await fetch('https://dummyjson.com/products/' + id)
-        .then(res => res.json());
-}
+import { getProductAfterId } from "./api.js";
 
 export async function loadProductPage() {
     let productId = Number(new URLSearchParams(window.location.search).get("id"));
