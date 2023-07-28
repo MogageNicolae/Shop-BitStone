@@ -68,6 +68,31 @@
       grid-template-columns: repeat(2, 1fr);
     }
   }
+
+  .load-more-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20%;
+    height: 50px;
+    margin-left: 40%;
+    margin-top: 50px;
+    background-color: #f0f0f0;
+    border: 1px solid #000;
+    border-radius: 5px;
+    font-size: clamp(1rem, 1.3vw, 2rem);
+    transition: all 0.2s ease-in-out;
+
+    &.hidden {
+      display: none;
+    }
+
+    &:hover {
+      cursor: pointer;
+      background-color: #000;
+      color: #f0f0f0;
+    }
+  }
 }
 
 .product {
@@ -150,6 +175,10 @@
       }
     }
   }
+}
+
+footer {
+  margin-top: 50px;
 }
 
 .cart-list {
