@@ -10,43 +10,51 @@ let cartListClicked = false;
 let cartListTimeout = null;
 
 export async function initCartList() {
-    document.querySelector('.nav-bar-menu-right ul li:last-child').onmouseover = () => {
+    console.log('initCartList');
+
+    document.querySelector('.nav-bar-menu-right ul li:last-child').addEventListener('mouseover', () => {
         document.querySelector('.cart-list').classList.add('show');
         clearTimeout(cartListTimeout);
-    }
+    });
 
-    document.querySelector('.nav-bar-menu-right ul li:last-child').onmouseout = () => {
+    document.querySelector('.nav-bar-menu-right ul li:last-child').addEventListener('mouseout', () => {
         if (cartListClicked) {
             return;
         }
         cartListTimeout = setTimeout(() => {
             document.querySelector('.cart-list').classList.remove('show');
         }, 1000);
-    }
+    });
 
-    document.querySelector('.nav-bar-menu-right ul li:last-child').onclick = () => {
+    document.querySelector('.nav-bar-menu-right ul li:last-child').addEventListener('click', () => {
         cartListClicked = true;
         document.querySelector('.cart-list').classList.add('show');
-    }
+    });
 
-    document.querySelector('.cart-list-header-close').onclick = () => {
+    document.querySelector('.cart-list-header-close').addEventListener('click', () => {
         cartListClicked = false;
         document.querySelector('.cart-list').classList.remove('show');
-    }
+    });
 
-    document.querySelector('.cart-list').onmouseover = () => {
+    document.querySelector('.cart-list').addEventListener('mouseover', () => {
         document.querySelector('.cart-list').classList.add('show');
         clearTimeout(cartListTimeout);
-    }
+    });
 
-    document.querySelector('.cart-list').onmouseout = () => {
+    document.querySelector('.cart-list').addEventListener('mouseout', () => {
         if (cartListClicked) {
             return;
         }
         cartListTimeout = setTimeout(() => {
             document.querySelector('.cart-list').classList.remove('show');
         }, 1000);
-    }
+    });
+
+    document.querySelector('.cart-list-footer-checkout').addEventListener('click', () => {
+        window.location.href = 'checkout.html';
+    });
+
+    console.log('initCartList - finish');
 
     let cart = await getCartAPI();
     document.querySelector('.quantity-cart').innerHTML = cart.totalQuantity;

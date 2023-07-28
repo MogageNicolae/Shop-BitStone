@@ -1,4 +1,4 @@
-import {fetchProducts, getProductAfterId} from './api.js';
+import {fetchProducts} from './api.js';
 import {addAddToCartListeners} from "./cart";
 
 setTimeout(() => fetchProducts(10000).then(res => document.querySelector('#no-of-products').innerHTML = 'Products: ' + res.length), 1000);
@@ -11,7 +11,7 @@ export async function initProducts() {
     document.querySelector('.load-more-button').addEventListener('click', async () => {
         currentPage++;
         await loadProducts();
-        if(currentPage * productsPerPage >= document.querySelector('#no-of-products').innerHTML.replace('Products: ', '')) {
+        if (currentPage * productsPerPage >= document.querySelector('#no-of-products').innerHTML.replace('Products: ', '')) {
             document.querySelector('.load-more-button').classList.add('hidden');
         }
     });
