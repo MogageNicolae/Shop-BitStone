@@ -18,6 +18,13 @@
   font-size: clamp(1rem, 1.5vw, 2rem);
 }
 
+.shop-name-single {
+  margin: 0;
+  padding: 25px;
+  text-align: center;
+  background: black;
+}
+
 .nav-bar-menu {
   display: flex;
   flex-direction: row;

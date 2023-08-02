@@ -1,12 +1,10 @@
 import {fetchProducts} from './api.js';
 import {addAddToCartListeners} from "./cart";
 
-setTimeout(() => fetchProducts(10000).then(res => document.querySelector('#no-of-products').innerHTML = 'Products: ' + res.length), 1000);
 let productsPerPage = 12;
 let currentPage = 1;
 
-export async function initProducts() {
-    await loadProducts();
+export function initLoadMoreButton() {
     document.querySelector('.load-more-button').classList.remove('hidden');
     document.querySelector('.load-more-button').addEventListener('click', async () => {
         currentPage++;
@@ -17,7 +15,14 @@ export async function initProducts() {
     });
 }
 
-function createCssClass(className, urlSimple) {
+export async function initProducts() {
+    // setTimeout(() => fetchProducts(10000).then(res => document.querySelector('#no-of-products').innerHTML = 'Products: ' + res.length), 1000);
+    fetchProducts(10000).then(res => document.querySelector('#no-of-products').innerHTML = 'Products: ' + res.length);
+    await loadProducts();
+    initLoadMoreButton();
+}
+
+export function createCssClass(className, urlSimple) {
     let style = document.createElement('style');
     style.textContent = 'style';
     style.innerHTML = `
@@ -37,12 +42,12 @@ function goToProductPage() {
     });
 }
 
-function addListeners() {
+export function addListeners() {
     addAddToCartListeners();
     goToProductPage();
 }
 
-function createNewProductGrid(product) {
+export function createNewProductGrid(product) {
     return `
     <div class="product">
         <div class="product-image id${product.id}" data-id="${product.id}">
@@ -62,7 +67,14 @@ function createNewProductGrid(product) {
 }
 
 async function loadProducts() {
-    let products = await fetchProducts(productsPerPage, (currentPage - 1) * productsPerPage);
+    let products;
+    if (JSON.parse(localStorage.getItem('products')).length <= (currentPage - 1) * productsPerPage) {
+        let newProducts = await fetchProducts(productsPerPage, (currentPage - 1) * productsPerPage);
+        products = JSON.parse(localStorage.getItem('products')).concat(newProducts);
+        localStorage.setItem('products', JSON.stringify(products));
+        console.log('loaded new products');
+    }
+    products = JSON.parse(localStorage.getItem('products')).slice((currentPage - 1) * productsPerPage, currentPage * productsPerPage);
 
     products.forEach((product) => {
         document.querySelector('.products-grid').insertAdjacentHTML('beforeend', createNewProductGrid(product));
