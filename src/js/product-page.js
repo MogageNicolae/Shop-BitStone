@@ -9,7 +9,7 @@ if (await loadProductPage() > 1) {
     document.querySelector('.next').addEventListener('click', goToNextSlide);
     document.querySelectorAll('.dot').forEach((dot, index) => {
         dot.addEventListener('click', () => {
-            currentSlide(index + 1);
+            currentSlide(index);
         });
     });
 }

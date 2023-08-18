@@ -5,6 +5,8 @@ import {addListeners, createCssClass, createNewProductGrid, initProducts} from "
 import {fetchProductsByCategory} from "./api";
 
 let addedFilters = new Set();
+let currentPage = 1;
+let productsPerPage = 12;
 init();
 initFilters();
 await initProducts();
@@ -31,9 +33,9 @@ async function applyFiltersToProducts() {
         return;
     }
 
-    const loadedProducts = [];
+    let loadedProducts = [];
     for (const filter of addedFilters) {
-        if(localStorage.getItem(filter) === null) {
+        if (localStorage.getItem(filter) === null) {
             const filteredProducts = await fetchProductsByCategory(filter);
             localStorage.setItem(filter, JSON.stringify(filteredProducts));
         }
@@ -42,10 +44,21 @@ async function applyFiltersToProducts() {
     document.querySelector('.products-grid').innerHTML = '';
 
     document.querySelector('#no-of-products').innerHTML = 'Products: ' + loadedProducts.length;
-    loadedProducts.forEach((product) => {
-        document.querySelector('.products-grid').insertAdjacentHTML('beforeend', createNewProductGrid(product));
-        createCssClass('id' + product.id, product.images[0]);
-    });
+    let areMoreProducts = true;
+    for (let index = (currentPage - 1) * productsPerPage; index < currentPage * productsPerPage; index++) {
+        if (index >= loadedProducts.length) {
+            document.querySelector('.load-more-button').classList.add('hidden');
+            areMoreProducts = false;
+            break;
+        }
+        document.querySelector('.products-grid').insertAdjacentHTML('beforeend', createNewProductGrid(loadedProducts[index]));
+        createCssClass('id' + loadedProducts[index].id, loadedProducts[index].images[0]);
+    }
+
+    if (areMoreProducts) {
+        currentPage++;
+        document.querySelector('.load-more-button').classList.remove('hidden');
+    }
 
     addListeners();
 }
